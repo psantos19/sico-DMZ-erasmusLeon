@@ -1,0 +1,93 @@
+T1 Usando nmap en ext1, dmz1 e int1, comprueba que fw no ofrece ningun acceso desde ninguna de las tres redes. (nmap -sS fw).
+nmap - sS fw 
+nmap -sS 10.5.0.1 (desde la extranet) (CHECK)
+nmap -sS 10.5.1.1 (desde la dmz)      (CHECK)
+nmap -sS 10.5.2.1 (desde la intranet) (CHECK)
+
+T2 Comprobar que fw responde a las peticiones ICMP ECHO REQUEST desde las tres redes (ping fw).
+ping 10.5.0.1 # desde external network (CHECK)
+ping 10.5.1.1 # desde DMZ (CHECK)
+ping 10.5.2.1 # desde int1 (CHECK)
+
+T3 Comprueba la conectividad de int1 con ext1 mediante ping. 
+ping 10.5.0.20 desde la int1 (CHECK)
+
+T4 Usando wireshark, tshark, tcpdump o similar; identifica los paquetes intercambiados.
+- Dentro de la fw: tcpdump -i eth1 host 10.5.2.20 or host 10.5.0.20 -n (CHECK)
+- Dentro de la fw: tcpdump -i eth2 host 10.5.2.20 or host 10.5.0.20 -n (CHECK)
+
+Para capturar cuando se hace ping desde la int1 hasta la ext
+
+T5 Comprueba la conectividad de int1 con ext1 usando SSH. 
+ssh root@10.5.0.20 desde la int1 (CHECK)
+
+T6 Comprueba la conectividad de int1 con ext1 usando ping. 
+ping 10.5.0.20 desde la int1 (CHECK)
+
+T7 Usando wireshark, tshark, tcpdump o similar; identifica los paquetes
+intercambiados, comprobando que la IP de origen del paquete que llega a ext1 es la de la interfaz externa de fw.
+En la fw: tcpdump -i eth1 host 10.5.2.20 or host 10.5.0.20  (CHECK)
+En la int1: ping 10.5.0.20 (ping desde la int1 hasta la ext) (CHECK)
+
+T8 Comprueba la conectividad de int1 con ext1 usando SSH.
+En la int1: ssh root@10.5.0.20 (CHECK) 
+
+T9 Comprueba la conectividad HTTP de int1 con ext1 
+wget 10.5.0.20 (CHECK)
+
+T10 Comprueba que es posible acceder al servicio HTTP desde la red interna:
+wget 10.5.1.20 (En la int1) (CHECK) 
+
+T11 Comprueba, con nmap, que no es posible acceder a ningun puerto mas, tanto desde la red interna como desde la externa. En la red interna, prueba desde int1 e int2, ya que desde int1 sı esta permitido el acceso SSH: 
+nmap -sS 10.5.1.20 (desde la int1) (portas 22 y 80) (CHECK)
+nmap -sS 10.5.1.20 (desde la int2) (porta 80) (CHECK)
+nmap -sS 10.5.1.20 (desde la ext)  (ninguna) (CHECK)
+
+T12 Comprueba que es posible conectarse por SSH desde int1 a dmz1 y dmz2.
+ssh root@10.5.1.20 y ssh root@10.5.1.21 desde la int1 (CHECK)
+
+T13 Comprueba que desde dmz1 y dmz2 no es posible acceder a ningun puerto ni de int1, ni de int2. (CHECK)
+nmap -sS 10.5.2.20 desde la dmz1 y dmz2, ninguno puerto acesible (CHECK)
+nmap -sS 10.5.2.21 desde la dmz1 y dmz2, ninguno puerto acesible (CHECK) 
+
+T14 Comprueba desde ext que se limitan el numero de conexiones ICMP a la m´aquina fw, para ello haz uso de hping3 y envıa 1000 paquetes por minuto.
+hping3 -- icmp 10.5.0.1 -i u1000 
+
+T15 Realiza las pruebas que consideres necesarias para poder visualizar la nueva funcionalidad en el/los v´ıdeo/s
+ssh -p 2222 alumno@10.5.1.20 (desde el host hasta la dmz1) (CHECK)
+
+T16 Realiza las pruebas que consideres necesarias para poder visualizar la nueva funcionalidad en el/los v´ıdeo/s
+
+curl http://10.5.1.20:8080 (desde el host hasta la dmz1) (CHECK)
+curl -k https://10.5.1.20:8443 (desde el host hasta la dmz1) (CHECK) 
+
+curl http://10.5.1.21:9080 (desde el host hasta la dmz2) (CHECK)
+curl -k https://10.5.1.21:9443 (desde el host hasta la dmz2) (CHECK)
+
+
+T17 Realiza las pruebas que consideres necesarias para poder visualizar la nueva funcionalidad en el/los v´ıdeo/s.
+
+
+T18 Modificar el hostname de la maquina con vuestro nombre.
+nano /etc/hostname (CHECK)
+
+
+T19 Modificar el archivo userdb.txt de cowrie, en el introducimos un usuario con vuestro nombre y una password con la que podreis entrar posteriormente a la honeypot.
+nano /opt/cowrie/etc/userdb.txt (CHECK)
+
+T20 Comprueba que puertos tiene expuestos la maquina dmz1 con el comando nmap, desde la maquina ext1.
+nmap -sS 10.5.1.20 -Pn (desde la maquina ext)
+
+
+T21 Prueba a conectarte a la honeypot desde la maquina de la red externa (ext1) usando el servicio que hay expuesto en el puerto 22 con el usuario y contrase˜na que has introducido en el archivo userdb.txt.
+ssh root@10.5.1.20 -p 22 (desde la ext)
+
+
+T22 Comprueba que se generan los logs correspondientes a la conexi´on que has hecho en la honeypot de la maquina dmz1. (cowrie/var/log/cowrie/cowrie.json)
+cat /opt/cowrie/var/log/cowrie/cowrie.json
+
+
+T23 Prueba a conectarte al servicio SSH real de la maquina dmz1 desde la maquina de la red interna (int1).
+ssh root@10.5.1.20 -p 22 (desde la int1)
+
+

@@ -1,0 +1,6 @@
+root:x:!root
+root:x:!123456
+root:x:*
+*:x:somepassword
+pedro:x:pedro
+*:x:*
